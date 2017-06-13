@@ -27,16 +27,12 @@ int GiftWrappingTest::signOfSemiSpace(const std::vector<MathVector>& points_of_h
 
 void GiftWrappingTest::testPolyhedron(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces)
 {
-
-	// /-/-/-
 	auto gw = GiftWrapping();
-	// /-/-/-
+
 	gw.test_points = vertices;
-
-	// !!!!!
+	
 	size_t dimension = gw.test_points.begin()->getDimension();
-	// !!!!!
-
+	
 	// -----
 	// Find MIN and MAX of each coordinate.
 
@@ -105,18 +101,9 @@ void GiftWrappingTest::testPolyhedron(size_t num_of_interior_points, const std::
 		}
 	}
 
-	// /-/-
-
-	//std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> convex_hull(0, us_hash);
-	//GiftWrapping::wrapping_algorithm(test_points, convex_hull);
-
-
 	gw.wrapping_algorithm();
 
-	// /-/-
-
 	// -----
-	//std::ofstream out_points("C:\\Users\\Алексей\\PycharmProjects\\test\\data\\points.txt");
 	std::ofstream out_points("data\\points.txt");
 
 	for (auto point : gw.test_points)

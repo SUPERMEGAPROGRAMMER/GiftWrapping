@@ -273,7 +273,7 @@ size_t GiftWrapping::wrapping(bool is_first_hyperface, const MathVector& normal_
 
 				// To generate a random offset vector ...
 
-				double radius = 1;//1e-3;
+				double radius = 1e-3;
 				size_t dimension = all_points[0].getDimension();
 
 				boost::mt19937 generator;
