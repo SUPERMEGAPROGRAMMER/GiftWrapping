@@ -53,5 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="plot_3D4D.py" />
+    <None Include="draw_stats_CH.py" />
   </ItemGroup>
 </Project>
