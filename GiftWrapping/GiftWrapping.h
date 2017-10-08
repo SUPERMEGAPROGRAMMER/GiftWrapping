@@ -32,7 +32,7 @@ private:
 	void find_first_hyperface(std::unordered_set<size_t>& first_hyperface);
 
 	// -----
-	bool b_FinishAlgorithm = false;
-	bool b_NonSimplicity   = false;
+	bool b_FinishAlgorithm;// = false;
+	bool b_NonSimplicity;// = false;
 	// -----
 };

@@ -64,9 +64,10 @@ def onKeyEvent(event):
     # ~~~~~
        
     poly_verts = np.array([projected_points[map(int, faces[counter])] for counter in xrange(len(faces))])
-    poly = Poly3DCollection(poly_verts, facecolor=[0., 1., 0.], edgecolor=[0., 0., 0.], alpha=0.1)
+    poly = Poly3DCollection(poly_verts, facecolor=[1., 1., 1.], edgecolor=[0., 0., 0.], alpha=0.02)
 
-    ax.scatter(*zip(*projected_points), c=colors, alpha=0.)
+    #ax.scatter(*zip(*projected_points), c=colors, alpha=0.)
+    ax.scatter(*zip(*projected_points), cmap=plt.cm.winter, c=colors, alpha=1., s=100.)
     ax.add_collection3d(poly)
     fig.canvas.draw()
 
@@ -96,7 +97,7 @@ if is_4D:
 
     projected_points = np.array(map(lambda p: (p / (p[3]-3.))[0:3], points))
     poly_verts = np.array([projected_points[map(int, faces[counter])] for counter in xrange(len(faces))])
-    poly = Poly3DCollection(poly_verts, facecolor=[0., 1., 0.], edgecolor=[0., 0., 0.], alpha=0.1)
+    poly = Poly3DCollection(poly_verts, facecolor=[1., 1., 1.], edgecolor=[0., 0., 0.], alpha=0.02)
 else:
 	poly_verts = np.array([points[map(int, faces[counter])] for counter in xrange(len(faces))])
 	poly = Poly3DCollection(poly_verts, facecolor=[1., 1., 1.], edgecolor=[0., 0., 0.], alpha=0.1)
@@ -114,9 +115,9 @@ ax.set_ylim(-1., 1.)
 ax.set_zlim(-1., 1.)
 
 if is_4D:
-	sctr = ax.scatter(*zip(*projected_points), cmap=plt.cm.winter, c=colors, alpha=1., s=100.)
+    sctr = ax.scatter(*zip(*projected_points), cmap=plt.cm.winter, c=colors, alpha=1., s=100.)
 else:
-	sctr = ax.scatter(*zip(*points), cmap=plt.cm.winter, c=colors, alpha=1., s=100.)
+    sctr = ax.scatter(*zip(*points), cmap=plt.cm.winter, c=colors, alpha=1., s=100.)
 
 fig.colorbar(sctr, shrink=0.5, aspect=10)
 

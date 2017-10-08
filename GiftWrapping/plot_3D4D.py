@@ -57,14 +57,14 @@ def onKeyEvent(event):
     ax.set_zlim(-1., 1.)
 
 	# ~~~~~
-    """
+    #"""
     for i in xrange(len(projected_points)):
         ax.text(projected_points[i,0], projected_points[i,1], projected_points[i,2], i, None)
-	"""
+	#"""
     # ~~~~~
        
     poly_verts = np.array([projected_points[map(int, faces[counter])] for counter in xrange(len(faces))])
-    poly = Poly3DCollection(poly_verts, facecolor=[0., 1., 0.], edgecolor=[0., 0., 0.], alpha=0.1)
+    poly = Poly3DCollection(poly_verts, facecolor=[0., 1., 0.], edgecolor=[0., 0., 0.], alpha=0.02)
 
     ax.scatter(*zip(*projected_points))
     ax.add_collection3d(poly)
@@ -181,7 +181,7 @@ if is_4D:
 
     projected_points = np.array(map(lambda p: (p / (p[3]-3.))[0:3], points))
     poly_verts = np.array([projected_points[map(int, faces[counter])] for counter in xrange(len(faces))])
-    poly = Poly3DCollection(poly_verts, facecolor=[0., 1., 0.], edgecolor=[0., 0., 0.], alpha=0.1)
+    poly = Poly3DCollection(poly_verts, facecolor=[0., 1., 0.], edgecolor=[0., 0., 0.], alpha=0.02)
 else:
 	poly_verts = np.array([points[map(int, faces[counter])] for counter in xrange(len(faces))])
 	poly = Poly3DCollection(poly_verts, facecolor=[0., 0., 1.], edgecolor=[0., 0., 0.], alpha=0.3)
@@ -204,14 +204,14 @@ else:
 ax.add_collection3d(poly)
 
 # ~~~~~
-"""
+#"""
 if is_4D:
 	for i in xrange(len(projected_points)):
 		ax.text(projected_points[i,0], projected_points[i,1], projected_points[i,2], i, None)	
 else:	
 	for i in xrange(len(points)):
 		ax.text(points[i,0], points[i,1], points[i,2], i, None)
-"""
+#"""
 # ~~~~~
 
 if is_4D:

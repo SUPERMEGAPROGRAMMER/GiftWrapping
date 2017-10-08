@@ -114,7 +114,7 @@ size_t us_hash(const std::unordered_set<size_t>& S)
 
 void GiftWrappingTest::testNonSymplicialAlgorithm(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces)
 {
-	const size_t num_of_iter = 100;
+	const size_t num_of_iter = 10;
 	
 	auto gw = GiftWrapping();
 	gw.input_points = vertices;
@@ -233,13 +233,37 @@ void GiftWrappingTest::testPolyhedron(size_t num_of_interior_points, const std::
 	}
 	// $$$$$
 
-	//system("python plot_3D4D.py");
-	system("python draw_stats_CH.py");
+	system("python plot_3D4D.py");
+	//system("python draw_stats_CH.py");
 }
 
 void GiftWrappingTest::testRandomPointCloud(size_t num_of_points)
 {
 
+}
+
+void GiftWrappingTest::testRegularPolygon2D(size_t num_of_vertices, size_t num_of_interior_points)
+{
+	const double angle_offset = 0.0;
+	const double scale_factor = 1.0;
+
+
+	std::vector<MathVector> vertices;
+
+	for (size_t counter = 0; counter < num_of_vertices; ++counter)
+		vertices.push_back(MathVector({cos((angle_offset + 2 * boost::math::double_constants::pi * counter) / num_of_vertices), 
+									   sin((angle_offset + 2 * boost::math::double_constants::pi * counter) / num_of_vertices)}));
+
+
+	std::vector<std::vector<MathVector>> hyperfaces;
+
+	for (size_t counter = 0; counter < num_of_vertices - 1; ++counter)
+		hyperfaces.push_back(std::vector<MathVector>({vertices[counter], vertices[counter + 1]}));
+
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[num_of_vertices - 1], vertices[0] }));
+
+
+	testPolyhedron(num_of_interior_points, vertices, hyperfaces);
 }
 
 void GiftWrappingTest::testPyramid(size_t num_of_interior_points)
@@ -359,6 +383,53 @@ void GiftWrappingTest::testCube(size_t num_of_interior_points)
 
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[1], vertices[2] }));
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[2], vertices[1] }));
+
+	testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
+	//testPolyhedron(num_of_interior_points, vertices, hyperfaces);
+}
+
+void GiftWrappingTest::testDodecahedron(size_t num_of_interior_points)
+{
+	std::vector<MathVector> vertices;
+
+	vertices.push_back(MathVector({  0.469,  0.469,  0.469 }));
+	vertices.push_back(MathVector({  0.290,  0.000,  0.759 }));
+	vertices.push_back(MathVector({ -0.759, -0.290,  0.000 }));
+	vertices.push_back(MathVector({  0.759,  0.290,  0.000 }));
+	vertices.push_back(MathVector({ -0.469,  0.469, -0.469 }));
+
+	vertices.push_back(MathVector({  0.000, -0.759, -0.290 }));
+	vertices.push_back(MathVector({ -0.759,  0.290,  0.000 }));
+	vertices.push_back(MathVector({  0.469, -0.469,  0.469 }));
+	vertices.push_back(MathVector({ -0.469,  0.469,  0.469 }));
+	vertices.push_back(MathVector({ -0.469, -0.469,  0.469 }));
+
+	vertices.push_back(MathVector({  0.469, -0.469, -0.469 }));
+	vertices.push_back(MathVector({  0.290,  0.000, -0.759 }));
+	vertices.push_back(MathVector({ -0.469, -0.469, -0.469 }));
+	vertices.push_back(MathVector({  0.000, -0.759,  0.290 }));
+	vertices.push_back(MathVector({  0.000,  0.759, -0.290 }));
+
+	vertices.push_back(MathVector({ -0.290,  0.000,  0.759 }));
+	vertices.push_back(MathVector({  0.759, -0.290,  0.000 }));
+	vertices.push_back(MathVector({ -0.290,  0.000, -0.759 }));
+	vertices.push_back(MathVector({  0.469,  0.469, -0.469 }));
+	vertices.push_back(MathVector({  0.000,  0.759,  0.290 }));
+
+	std::vector<std::vector<MathVector>> hyperfaces;
+
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[9], vertices[15], vertices[1], vertices[7], vertices[13] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[6], vertices[4], vertices[14], vertices[19], vertices[8] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[12], vertices[2], vertices[9], vertices[13], vertices[5] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[6], vertices[2], vertices[12], vertices[17], vertices[4] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[16], vertices[3], vertices[18], vertices[11], vertices[10] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[19], vertices[0], vertices[1], vertices[15], vertices[8] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[16], vertices[7], vertices[1], vertices[0], vertices[3] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[5], vertices[10], vertices[11], vertices[17], vertices[12] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[18], vertices[14], vertices[4], vertices[17], vertices[11] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[16], vertices[10], vertices[5], vertices[13], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[6], vertices[8], vertices[15], vertices[9] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[19], vertices[14], vertices[18], vertices[3], vertices[0] }));
 
 	testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
 	//testPolyhedron(num_of_interior_points, vertices, hyperfaces);
@@ -488,5 +559,155 @@ void GiftWrappingTest::testTesseract(size_t num_of_interior_points)
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[2], vertices[0], vertices[1] }));
 
 	testPolyhedron(num_of_interior_points, vertices, hyperfaces);
+	//testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
 }
 
+void GiftWrappingTest::test24Cell(size_t num_of_interior_points)
+{
+	std::vector<MathVector> vertices;
+
+	vertices.push_back(MathVector({  2.0,  0.0,  0.0, 0.0 }));
+	vertices.push_back(MathVector({ -2.0,  0.0,  0.0, 0.0 }));
+	vertices.push_back(MathVector({ 0.0,  2.0,  0.0, 0.0 }));
+	vertices.push_back(MathVector({ 0.0, -2.0,  0.0, 0.0 }));
+	vertices.push_back(MathVector({ 0.0,  0.0,  2.0, 0.0 }));
+	vertices.push_back(MathVector({ 0.0,  0.0, -2.0, 0.0 }));
+	vertices.push_back(MathVector({ 0.0,  0.0,  0.0,  2.0 }));
+	vertices.push_back(MathVector({ 0.0,  0.0,  0.0, -2.0 }));
+
+	vertices.push_back(MathVector({ -1.0, -1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0,  1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0,  1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0,  1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0,  1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0,  1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0,  1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0,  1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0,  1.0,  1.0,  1.0 }));
+
+	std::vector<std::vector<MathVector>> hyperfaces;
+
+
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[16], vertices[17], vertices[19], vertices[18], vertices[3] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[22], vertices[23], vertices[21], vertices[20], vertices[2] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[20], vertices[21], vertices[17], vertices[16], vertices[5] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[20], vertices[16], vertices[18], vertices[22], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[17], vertices[21], vertices[23], vertices[19], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[18], vertices[19], vertices[23], vertices[22], vertices[4] }));
+	
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[1], vertices[8], vertices[10], vertices[11], vertices[9], vertices[3] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[1], vertices[12], vertices[8], vertices[9], vertices[13], vertices[5] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[1], vertices[14], vertices[10], vertices[8], vertices[12], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[1], vertices[9], vertices[11], vertices[15], vertices[13], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[1], vertices[11], vertices[10], vertices[14], vertices[15], vertices[4] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[1], vertices[14], vertices[12], vertices[13], vertices[15], vertices[2] }));
+
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[12], vertices[13], vertices[21], vertices[20], vertices[5] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[14], vertices[12], vertices[20], vertices[22], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[13], vertices[15], vertices[23], vertices[21], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[15], vertices[14], vertices[22], vertices[23], vertices[4] }));
+
+	
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[8], vertices[16], vertices[17], vertices[9], vertices[5] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[10], vertices[18], vertices[16], vertices[8], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[9], vertices[17], vertices[19], vertices[11], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[11], vertices[19], vertices[18], vertices[10], vertices[4] }));
+
+	
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[4], vertices[10], vertices[14], vertices[22], vertices[18], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[4], vertices[11], vertices[19], vertices[23], vertices[15], vertices[6] }));
+	
+	
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[5], vertices[8], vertices[16], vertices[20], vertices[12], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[5], vertices[9], vertices[13], vertices[21], vertices[17], vertices[6] }));
+	
+	testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
+	//testPolyhedron(num_of_interior_points, vertices, hyperfaces);
+}
+
+void GiftWrappingTest::testPenterakt(size_t num_of_interior_points)
+{
+	/*
+	std::vector<MathVector> vertices;
+
+	vertices.push_back(MathVector({ -1.0, -1.0, -1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0, -1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0, -1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0, -1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0,  1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0,  1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0,  1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, -1.0,  1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0, 1.0, -1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, 1.0, -1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0, 1.0, -1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, 1.0, -1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0, 1.0,  1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, 1.0,  1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({ -1.0, 1.0,  1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0, 1.0,  1.0,  1.0,  1.0 }));
+
+	vertices.push_back(MathVector({  1.0, -1.0, -1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0, -1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0, -1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0, -1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0,  1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0,  1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0,  1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0,  1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, 1.0, -1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, 1.0, -1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, 1.0, -1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, 1.0, -1.0,  1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, 1.0,  1.0, -1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, 1.0,  1.0, -1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0, 1.0,  1.0,  1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0, 1.0,  1.0,  1.0,  1.0 }));
+
+
+	std::vector<std::vector<MathVector>> hyperfaces;
+
+	// Inner cube
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[10], vertices[8], vertices[12], vertices[14] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[14], vertices[12], vertices[4], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[6], vertices[4], vertices[0], vertices[2] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[0], vertices[8], vertices[10] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[10], vertices[14], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[8], vertices[0], vertices[4], vertices[12] }));
+
+	// Outer cube
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[11], vertices[9], vertices[13], vertices[15] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[15], vertices[13], vertices[5], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[7], vertices[5], vertices[1], vertices[3] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[1], vertices[9], vertices[11] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[11], vertices[15], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[9], vertices[1], vertices[5], vertices[13] }));
+
+	// Bottom partitions
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[8], vertices[9], vertices[13], vertices[12] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[12], vertices[13], vertices[5], vertices[4] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[4], vertices[5], vertices[1], vertices[0] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[1], vertices[9], vertices[8] }));
+
+	// Upper partitions
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[10], vertices[11], vertices[15], vertices[14] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[14], vertices[15], vertices[7], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[6], vertices[7], vertices[3], vertices[2] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[3], vertices[11], vertices[10] }));
+
+	// Side partitions
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[11], vertices[10], vertices[8], vertices[9] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[15], vertices[14], vertices[12], vertices[13] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[7], vertices[6], vertices[4], vertices[5] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[2], vertices[0], vertices[1] }));
+
+	testPolyhedron(num_of_interior_points, vertices, hyperfaces);
+	*/
+}

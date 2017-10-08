@@ -28,20 +28,31 @@ GiftWrapping::~GiftWrapping()
 // -----
 void GiftWrapping::run_algorithm()
 {
+	// /////
+	unsigned int start_time = clock();
+	// /////
+
 	// ~~~~~
 	b_FinishAlgorithm = false;
-	b_NonSimplicity = false;
+	//b_NonSimplicity = false;
 	// ~~~~~
 
 	scatter_points = input_points;
 
-	while (true)
+	while (/*true*/!b_FinishAlgorithm)
 	{
 		b_NonSimplicity = false;
 		wrapping_algorithm();
-		if (b_FinishAlgorithm)
-			return;
+		// ~~~~~
+		//if (b_FinishAlgorithm)
+		//	return;
+		// ~~~~~
 	}
+
+	// /////
+	unsigned int end_time = clock();
+	std::cout << "Wrapping time: " << (float)(end_time - start_time) / CLOCKS_PER_SEC << std::endl;
+	// /////
 }
 // -----
 
@@ -51,8 +62,8 @@ void GiftWrapping::wrapping_algorithm()
 
 	// Initialize remaining indexes of points, which can be considered.
 	std::unordered_set<size_t> interest_indexes_of_points;
-	for (size_t counter = 0; counter < scatter_points.size(); ++counter)
-		interest_indexes_of_points.insert(counter);
+	//for (size_t counter = 0; counter < scatter_points.size(); ++counter)
+	//	interest_indexes_of_points.insert(counter);
 
 	// Declare queue of tagged hyperfaces and set of bounding subfaces.
 	std::queue<std::unordered_set<size_t>> queue_of_hyperfaces;
@@ -251,9 +262,10 @@ size_t GiftWrapping::wrapping(bool is_first_hyperface, const MathVector& normal_
 			return 0;
 		}
 			
-
-		//if (dot_v_a > 0)
-		return *indexes_of_candidates.begin();
+		// !!!!!
+		if (fabs(dot_v_a) > eps)
+		// !!!!!
+			return *indexes_of_candidates.begin();
 		//else
 		//	std::cout << "wrapping warning: \"ctg\" should be = +inf" << std::endl;
 	}
@@ -282,10 +294,12 @@ size_t GiftWrapping::wrapping(bool is_first_hyperface, const MathVector& normal_
 				// -----
 			}
 
-			//if (dot_v_a > 0)
-			return *it;
-			//else
-			//	continue;
+			// !!!!!
+			if (fabs(dot_v_a) > eps)
+			// !!!!!
+				return *it;
+			else
+				continue;
 		}
 
 		ctg = -dot_v_a / abs_dot_v_n;
