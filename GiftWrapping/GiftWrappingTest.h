@@ -10,10 +10,8 @@ public:
 	~GiftWrappingTest();
 
 	// -----
-	//static void testTriangle(size_t num_of_interior_points);
-	//static void testSquare(size_t num_of_interior_points);
-	//static void testLineSegment(size_t num_of_interior_points);
-	static void testRegularPolygon2D(size_t num_of_vertices, size_t num_of_interior_points);
+	static void testRegularPolygon_2D(size_t num_of_vertices, size_t num_of_interior_points);
+	static void testRegularPolygon_2D_in_3D(size_t num_of_vertices, size_t num_of_interior_points);
 	// -----
 
 	static void testPyramid(size_t num_of_interior_points);
@@ -29,10 +27,16 @@ public:
 
 private:
 	static int signOfSemiSpace(const std::vector<MathVector>& points_of_hyperface, const MathVector& test_point);
-	static void testPolyhedron(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces);
+	static void testPolyhedron(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces, void (*postprocessing_points)(std::vector<MathVector>& points));
 	static void testRandomPointCloud(size_t num_of_points);
 
 	static void setFilledPolyhedron(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces, std::vector<MathVector>& result);
 	static void testNonSymplicialAlgorithm(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces);
+
+	// -----
+	static void rotate_translate(std::vector<MathVector>& points, const std::vector<double>& angles, const MathVector& offset);
+	static void generate_rotation_matrix(double angle, size_t axis_1, size_t axis_2, size_t dimension, std::vector<std::vector<double>>& res_matrix);
+	static void generate_regular_polygon_2D(size_t num_of_vertices, size_t num_of_interior_points, std::vector<MathVector>& vertices, std::vector<std::vector<MathVector>>& hyperfaces);
+	// -----
 };
 

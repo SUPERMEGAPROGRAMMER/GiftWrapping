@@ -1,10 +1,14 @@
 #include "stdafx.h"
 #include "GiftWrapping.h"
 
-size_t us_hash(const std::unordered_set<size_t>& S)
+
+size_t us_hash(const Face& S)
 {
 	size_t sum = 0;
-	for (auto item : S)
+	// -----
+	// for (auto item : S)
+	for (auto item : S.m_data)
+	// -----
 		sum += item;
 	return sum;
 }
@@ -13,11 +17,14 @@ GiftWrapping::GiftWrapping()
 {
 	input_points = std::vector<MathVector>();
 
-	// -----
 	scatter_points = std::vector<MathVector>();
-	// -----
 
-	convex_hull = std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)>(0, us_hash);
+	// -----
+	// convex_hull = std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)>(0, us_hash);
+	// convex_hull = std::unordered_set<std::set<size_t>, decltype(&us_hash)>(0, us_hash);
+	// convex_hull = std::unordered_set<Face, decltype(&us_hash)>(0, us_hash);
+	convex_hull = Faces();
+	// -----
 }
 
 
@@ -25,28 +32,20 @@ GiftWrapping::~GiftWrapping()
 {
 }
 
-// -----
 void GiftWrapping::run_algorithm()
 {
 	// /////
 	unsigned int start_time = clock();
 	// /////
 
-	// ~~~~~
 	b_FinishAlgorithm = false;
-	//b_NonSimplicity = false;
-	// ~~~~~
 
 	scatter_points = input_points;
 
-	while (/*true*/!b_FinishAlgorithm)
+	while (!b_FinishAlgorithm)
 	{
 		b_NonSimplicity = false;
 		wrapping_algorithm();
-		// ~~~~~
-		//if (b_FinishAlgorithm)
-		//	return;
-		// ~~~~~
 	}
 
 	// /////
@@ -54,11 +53,10 @@ void GiftWrapping::run_algorithm()
 	std::cout << "Wrapping time: " << (float)(end_time - start_time) / CLOCKS_PER_SEC << std::endl;
 	// /////
 }
-// -----
 
 void GiftWrapping::wrapping_algorithm()
 {
-	convex_hull.clear();
+	convex_hull.m_data.clear();
 
 	// Initialize remaining indexes of points, which can be considered.
 	std::unordered_set<size_t> interest_indexes_of_points;
@@ -66,26 +64,62 @@ void GiftWrapping::wrapping_algorithm()
 	//	interest_indexes_of_points.insert(counter);
 
 	// Declare queue of tagged hyperfaces and set of bounding subfaces.
-	std::queue<std::unordered_set<size_t>> queue_of_hyperfaces;
-	std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> bounding_subfaces(0, us_hash);
-
+	// -----
+	// std::queue<std::unordered_set<size_t>> queue_of_hyperfaces;
+	// std::queue<std::set<size_t>> queue_of_hyperfaces;
+	std::queue<Face> queue_of_hyperfaces;
+	// -----
+	// -----
+	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> bounding_subfaces(0, us_hash);
+	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> bounding_subfaces(0, us_hash);
+	// std::unordered_set<Face, decltype(&us_hash)> bounding_subfaces(0, us_hash);
+	Faces bounding_subfaces;
+	// -----
 	// Find first hyperface.
-	std::unordered_set<size_t> current_hyperface;
-
+	// -----
+	// std::unordered_set<size_t> current_hyperface;
+	// std::set<size_t> current_hyperface;
+	Face current_hyperface;
+	// -----
 	find_first_hyperface(current_hyperface);
 
 	// Push first hyperface in queue and find its subfaces.
 	queue_of_hyperfaces.push(current_hyperface);
 	find_subfaces(current_hyperface, bounding_subfaces);
 
-	std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces_of_current_hyperface(0, us_hash);
+	// -----
+	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces_of_current_hyperface(0, us_hash);
+	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> subfaces_of_current_hyperface(0, us_hash);
+	// std::unordered_set<Face, decltype(&us_hash)> subfaces_of_current_hyperface(0, us_hash);
+	Faces subfaces_of_current_hyperface;
+	// -----
 
-	std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces(0, us_hash);
-	std::unordered_set<size_t> new_hyperface;
+	// -----
+	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces(0, us_hash);
+	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> subfaces(0, us_hash);
+	// std::unordered_set<Face, decltype(&us_hash)> subfaces(0, us_hash);
+	Faces subfaces;
+	// -----
+
+	// -----
+	// std::unordered_set<size_t> new_hyperface;
+	// std::set<size_t> new_hyperface;
+	Face new_hyperface;
+	// -----
 	size_t new_vertex_index;	
 
-	std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> intersection_of_subfaces(0, us_hash);
-	std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces_of_new_hyperface(0, us_hash);
+	// -----
+	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> intersection_of_subfaces(0, us_hash);
+	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> intersection_of_subfaces(0, us_hash);
+	// std::unordered_set<Face, decltype(&us_hash)> intersection_of_subfaces(0, us_hash);
+	Faces intersection_of_subfaces;
+	// -----
+	// -----
+	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces_of_new_hyperface(0, us_hash);
+	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> subfaces_of_new_hyperface(0, us_hash);
+	// std::unordered_set<Face, decltype(&us_hash)> subfaces_of_new_hyperface(0, us_hash);
+	Faces subfaces_of_new_hyperface;
+	// -----
 
 	std::vector<MathVector> cross_product_vectors;
 
@@ -100,16 +134,16 @@ void GiftWrapping::wrapping_algorithm()
 		find_subfaces(current_hyperface, subfaces_of_current_hyperface);
 
 		// Find intersection of subfaces_of_current_hyperface and bounding_subfaces.
-		subfaces.clear();
-		for (auto subface : subfaces_of_current_hyperface)
-			if (bounding_subfaces.count(subface))
-				subfaces.insert(subface);
+		subfaces.m_data.clear();
+		for (auto subface : subfaces_of_current_hyperface.m_data)
+			if (bounding_subfaces.m_data.count(subface))
+				subfaces.m_data.insert(subface);
 
 		// Find n.
 		cross_product_vectors.clear();
 
-		for (auto it = std::next(current_hyperface.begin(), 1); it != current_hyperface.end(); ++it)
-			cross_product_vectors.push_back(scatter_points[*it] - scatter_points[*current_hyperface.begin()]);
+		for (auto it = std::next(current_hyperface.m_data.begin(), 1); it != current_hyperface.m_data.end(); ++it)
+			cross_product_vectors.push_back(scatter_points[*it] - scatter_points[*current_hyperface.m_data.begin()]);
 
 		normal_of_hyperface = MathVector::crossProduct(cross_product_vectors);
 		normal_of_hyperface.normalize();
@@ -117,30 +151,30 @@ void GiftWrapping::wrapping_algorithm()
 		// Ориентируем нормаль гиперграни в полупространство под aff(F)
 		// Это не подходит для вырожденного случая (несимплициального), т.к. там ск. пр-ие может быть == 0
 		for (size_t counter = 0; counter < scatter_points.size(); ++counter)
-			if (!current_hyperface.count(counter))
+			if (!current_hyperface.m_data.count(counter))
 			{
-				if ((scatter_points[counter] - scatter_points[*current_hyperface.begin()]) * normal_of_hyperface < 0)
+				if ((scatter_points[counter] - scatter_points[*current_hyperface.m_data.begin()]) * normal_of_hyperface < 0)
 					normal_of_hyperface = -1.0 * normal_of_hyperface;
 				break;
 			}
 
-		for (auto subface : subfaces)
+		for (auto subface : subfaces.m_data)
 		{
 			// Find a.
 			cross_product_vectors.clear();
 			cross_product_vectors.push_back(normal_of_hyperface);
-			for (auto it = std::next(subface.begin(), 1); it != subface.end(); ++it)
-				cross_product_vectors.push_back(scatter_points[*it] - scatter_points[*subface.begin()]);
+			for (auto it = std::next(subface.m_data.begin(), 1); it != subface.m_data.end(); ++it)
+				cross_product_vectors.push_back(scatter_points[*it] - scatter_points[*subface.m_data.begin()]);
 
 			normal_of_subface = MathVector::crossProduct(cross_product_vectors);
 			normal_of_subface.normalize();
 
 			// (Возможно можно как-то неявно задать ориентацию вектора a)
 			// Ориентируем нормаль подграни в противоположном направлении от вершины данной гиперграни вне текущей подграни
-			for (auto index : current_hyperface)
-				if (!subface.count(index))
+			for (auto index : current_hyperface.m_data)
+				if (!subface.m_data.count(index))
 				{
-					if ((scatter_points[index] - scatter_points[*subface.begin()]) * normal_of_subface > 0)
+					if ((scatter_points[index] - scatter_points[*subface.m_data.begin()]) * normal_of_subface > 0)
 						normal_of_subface = -1.0 * normal_of_subface;
 					break;
 				}
@@ -150,20 +184,18 @@ void GiftWrapping::wrapping_algorithm()
 			for (size_t counter = 0; counter < scatter_points.size(); ++counter)
 				interest_indexes_of_points.insert(counter);
 
-			for (auto vertex : current_hyperface)
+			for (auto vertex : current_hyperface.m_data)
 				interest_indexes_of_points.erase(vertex);
 
 
-			new_vertex_index = wrapping(false, normal_of_hyperface, scatter_points[*subface.begin()], normal_of_subface, interest_indexes_of_points);
+			new_vertex_index = wrapping(false, normal_of_hyperface, scatter_points[*subface.m_data.begin()], normal_of_subface, interest_indexes_of_points);
 
-			// -----
 			if (b_NonSimplicity)
 				return;
-			// -----
 
 			// Add new hyperface in queue.
 			new_hyperface = subface;
-			new_hyperface.insert(new_vertex_index);
+			new_hyperface.m_data.insert(new_vertex_index);
 			queue_of_hyperfaces.push(new_hyperface);
 
 			// Recalculate set of bounding subfaces
@@ -173,54 +205,54 @@ void GiftWrapping::wrapping_algorithm()
 
 			find_subfaces(new_hyperface, subfaces_of_new_hyperface);
 
-			intersection_of_subfaces.clear();
-			for (auto subface_of_new_hyperface : subfaces_of_new_hyperface)
-				if (bounding_subfaces.count(subface_of_new_hyperface))
-					intersection_of_subfaces.insert(subface_of_new_hyperface);
+			intersection_of_subfaces.m_data.clear();
+			for (auto subface_of_new_hyperface : subfaces_of_new_hyperface.m_data)
+				if (bounding_subfaces.m_data.count(subface_of_new_hyperface))
+					intersection_of_subfaces.m_data.insert(subface_of_new_hyperface.m_data);
 
 			// 2) Г = Г U F'
-			for (auto subface_of_new_hyperface : subfaces_of_new_hyperface)
-				bounding_subfaces.insert(subface_of_new_hyperface);
+			for (auto subface_of_new_hyperface : subfaces_of_new_hyperface.m_data)
+				bounding_subfaces.m_data.insert(subface_of_new_hyperface);
 
 			// 3) Г = Г \ intersection_of_subfaces
-			for (auto subface_from_intersection : intersection_of_subfaces)
-				bounding_subfaces.erase(subface_from_intersection);
+			for (auto subface_from_intersection : intersection_of_subfaces.m_data)
+				bounding_subfaces.m_data.erase(subface_from_intersection);
 		}
 
-		convex_hull.insert(current_hyperface);
+		convex_hull.m_data.insert(current_hyperface);
 	}
 
-	// -----
 	b_FinishAlgorithm = true;
-	// -----
 }
 
-void GiftWrapping::find_subfaces(const std::unordered_set<size_t>& hyperface, std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)>& subfaces)
+void GiftWrapping::find_subfaces(const Face& hyperface, Faces& subfaces)
 {
-	subfaces.clear();
+	subfaces.m_data.clear();
 
-	std::unordered_set<size_t> subface;
+	// -----
+	// std::unordered_set<size_t> subface;
+	// std::set<size_t> subface;
+	Face subface;
+	// -----
 
-
-	for (size_t indexSkip = 0; indexSkip < hyperface.size(); ++indexSkip)
+	for (size_t indexSkip = 0; indexSkip < hyperface.m_data.size(); ++indexSkip)
 	{
-		subface.clear();
+		subface.m_data.clear();
 
-		auto it = hyperface.begin();
+		auto it = hyperface.m_data.begin();
 
-		for (size_t index = 0; index < hyperface.size(); ++index)
+		for (size_t index = 0; index < hyperface.m_data.size(); ++index)
 		{
 			if (index != indexSkip)
-				subface.insert(*it);
+				subface.m_data.insert(*it);
 
 			++it;
 		}
 
-		subfaces.insert(subface);
+		subfaces.m_data.insert(subface);
 	}
 }
 
-// -----
 void GiftWrapping::scatter_operation()
 {
 	double max_coord_offset = 1e-3;
@@ -240,7 +272,6 @@ void GiftWrapping::scatter_operation()
 		*it = *it + offset;
 	}
 }
-// -----
 
 // all_points изменяется в несимлициальном случае, потому std::vector<MathVector>& all_points (без const)
 size_t GiftWrapping::wrapping(bool is_first_hyperface, const MathVector& normal_of_hyperface, const MathVector& point_of_subface, const MathVector& normal_of_subface, const std::unordered_set<size_t>& indexes_of_candidates)
@@ -261,13 +292,21 @@ size_t GiftWrapping::wrapping(bool is_first_hyperface, const MathVector& normal_
 			scatter_operation();
 			return 0;
 		}
-			
+
+		// -----
+		std::cout << "A non-simplicial case is found on 1st hyperface (status: alpha)" << std::endl;
+		system("pause");
+		exit(-1);
+
+		/*
 		// !!!!!
 		if (fabs(dot_v_a) > eps)
 		// !!!!!
 			return *indexes_of_candidates.begin();
 		//else
 		//	std::cout << "wrapping warning: \"ctg\" should be = +inf" << std::endl;
+		*/
+		// -----
 	}
 
 	double ctg = -dot_v_a / abs_dot_v_n;
@@ -287,19 +326,27 @@ size_t GiftWrapping::wrapping(bool is_first_hyperface, const MathVector& normal_
 			if (!is_first_hyperface)
 			{
 				std::cout << "A non-simplicial case is found" << std::endl;
-				// -----
+				
 				b_NonSimplicity = true;
 				scatter_operation();
 				return 0;
-				// -----
+				
 			}
 
+			// -----
+			std::cout << "A non-simplicial case is found on 1st hyperface (status: alpha)" << std::endl;
+			system("pause");
+			exit(-1);
+
+			/*
 			// !!!!!
 			if (fabs(dot_v_a) > eps)
 			// !!!!!
 				return *it;
 			else
 				continue;
+			*/
+			// -----
 		}
 
 		ctg = -dot_v_a / abs_dot_v_n;
@@ -321,8 +368,31 @@ void GiftWrapping::create_coordinate_axis(size_t num_of_coordinate, size_t dimen
 	coordinate_axis[num_of_coordinate] = 1.0;
 }
 
+// -----
+void GramSchmidtOrthogonalization(const std::vector<MathVector>& some_basis, std::vector<MathVector>& orthonormal_basis)
+{
+	orthonormal_basis.clear();
 
-void GiftWrapping::find_first_hyperface(std::unordered_set<size_t>& first_hyperface)
+	MathVector v = some_basis[0];
+	v.normalize();
+
+	orthonormal_basis.push_back(v);
+
+	for (size_t i = 1; i < some_basis.size(); ++i)
+	{
+		v = some_basis[i];
+
+		for (size_t j = 0; j < i; ++j)
+			v = v - (some_basis[i] * orthonormal_basis[j]) * orthonormal_basis[j];
+
+		v.normalize();
+		orthonormal_basis.push_back(v);
+	}
+
+}
+// -----
+
+void GiftWrapping::find_first_hyperface(Face& first_hyperface)
 {
 	// Initialize remaining indexes, which can be considered.
 	std::unordered_set<size_t> indexes_of_candidates;
@@ -340,7 +410,7 @@ void GiftWrapping::find_first_hyperface(std::unordered_set<size_t>& first_hyperf
 			index_of_point_with_min_first_coordinate = counter;
 		}
 
-	first_hyperface.insert(index_of_point_with_min_first_coordinate);
+	first_hyperface.m_data.insert(index_of_point_with_min_first_coordinate);
 	indexes_of_candidates.erase(index_of_point_with_min_first_coordinate);
 
 
@@ -361,11 +431,11 @@ void GiftWrapping::find_first_hyperface(std::unordered_set<size_t>& first_hyperf
 		cross_product_vectors.clear();
 		cross_product_vectors.push_back(normal_of_hyperface);
 
-		auto it = std::next(first_hyperface.begin());
+		auto it = std::next(first_hyperface.m_data.begin());
 
 		for (size_t counter_2 = 1; counter_2 < counter_1; ++counter_2)
 		{
-			cross_product_vectors.push_back(scatter_points[*it] - scatter_points[*first_hyperface.begin()]);
+			cross_product_vectors.push_back(scatter_points[*it] - scatter_points[*first_hyperface.m_data.begin()]);
 			++it;
 		}
 
@@ -378,17 +448,17 @@ void GiftWrapping::find_first_hyperface(std::unordered_set<size_t>& first_hyperf
 		normal_of_subface = MathVector::crossProduct(cross_product_vectors);
 		normal_of_subface.normalize();
 
-		new_index = wrapping(true, normal_of_hyperface, scatter_points[*first_hyperface.begin()], normal_of_subface, indexes_of_candidates);
-		first_hyperface.insert(new_index);
+		new_index = wrapping(true, normal_of_hyperface, scatter_points[*first_hyperface.m_data.begin()], normal_of_subface, indexes_of_candidates);
+		first_hyperface.m_data.insert(new_index);
 		indexes_of_candidates.erase(new_index);
 
 		// Recalculate normal of a hyperface
 		cross_product_vectors.clear();
 
-		it = std::next(first_hyperface.begin(), 1);
+		it = std::next(first_hyperface.m_data.begin(), 1);
 		for (size_t counter_2 = 1; counter_2 < counter_1 + 1; ++counter_2)
 		{
-			cross_product_vectors.push_back(scatter_points[*it] - scatter_points[*first_hyperface.begin()]);
+			cross_product_vectors.push_back(scatter_points[*it] - scatter_points[*first_hyperface.m_data.begin()]);
 			++it;
 		}
 
@@ -408,5 +478,26 @@ void GiftWrapping::find_first_hyperface(std::unordered_set<size_t>& first_hyperf
 		else
 			normal_of_hyperface.normalize();
 	}
+
+	// -----
+	if (input_points.size() == input_points[0].getDimension())
+	{
+		// Найти базис линейной оболочки input_points
+		std::vector<MathVector> some_basis(input_points.size() - 1);
+		
+		for (size_t counter = 1; counter < input_points.size(); ++counter)
+			some_basis[counter - 1] = input_points[counter] - input_points[0];
+
+		std::vector<MathVector> orthonormal_basis(some_basis.size());
+
+		GramSchmidtOrthogonalization(some_basis, orthonormal_basis);
+
+		for (auto v : orthonormal_basis)
+			std::cout << v << std::endl;
+
+		system("pause");
+		exit(-1);
+	}
+	// -----
 }
 

@@ -63,6 +63,22 @@ double operator*(const MathVector& left, const MathVector& right)
 	return result;
 }
 
+// -----
+MathVector operator*(const std::vector<std::vector<double>>& M, const MathVector &v)
+{
+	MathVector res(v.getDimension());
+	MathVector M_row;
+
+	for (size_t counter = 0; counter < v.getDimension(); ++counter)
+	{
+		M_row = M[counter];
+		res[counter] = M_row * v;
+	}
+
+	return res;
+}
+// -----
+
 std::ostream& operator<<(std::ostream& output_stream, const MathVector& vector)
 {
 	//output_stream << "{ ";

@@ -16,6 +16,11 @@ public:
 	friend MathVector    operator-(const MathVector&, const MathVector&);
 	friend MathVector    operator*(double, const MathVector&);
 	friend double        operator*(const MathVector&, const MathVector&);
+
+	// -----
+	friend MathVector    operator*(const std::vector<std::vector<double>>&, const MathVector&);
+	// -----
+	
 	friend std::ostream& operator<<(std::ostream&, const MathVector&);
 	
 	double& operator[](size_t);
