@@ -5,26 +5,18 @@
 size_t us_hash(const Face& S)
 {
 	size_t sum = 0;
-	// -----
-	// for (auto item : S)
+
 	for (auto item : S.m_data)
-	// -----
 		sum += item;
+
 	return sum;
 }
 
 GiftWrapping::GiftWrapping()
 {
 	input_points = std::vector<MathVector>();
-
 	scatter_points = std::vector<MathVector>();
-
-	// -----
-	// convex_hull = std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)>(0, us_hash);
-	// convex_hull = std::unordered_set<std::set<size_t>, decltype(&us_hash)>(0, us_hash);
-	// convex_hull = std::unordered_set<Face, decltype(&us_hash)>(0, us_hash);
 	convex_hull = Faces();
-	// -----
 }
 
 
@@ -60,69 +52,26 @@ void GiftWrapping::wrapping_algorithm()
 
 	// Initialize remaining indexes of points, which can be considered.
 	std::unordered_set<size_t> interest_indexes_of_points;
-	//for (size_t counter = 0; counter < scatter_points.size(); ++counter)
-	//	interest_indexes_of_points.insert(counter);
 
 	// Declare queue of tagged hyperfaces and set of bounding subfaces.
-	// -----
-	// std::queue<std::unordered_set<size_t>> queue_of_hyperfaces;
-	// std::queue<std::set<size_t>> queue_of_hyperfaces;
 	std::queue<Face> queue_of_hyperfaces;
-	// -----
-	// -----
-	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> bounding_subfaces(0, us_hash);
-	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> bounding_subfaces(0, us_hash);
-	// std::unordered_set<Face, decltype(&us_hash)> bounding_subfaces(0, us_hash);
 	Faces bounding_subfaces;
-	// -----
+
 	// Find first hyperface.
-	// -----
-	// std::unordered_set<size_t> current_hyperface;
-	// std::set<size_t> current_hyperface;
 	Face current_hyperface;
-	// -----
 	find_first_hyperface(current_hyperface);
 
 	// Push first hyperface in queue and find its subfaces.
 	queue_of_hyperfaces.push(current_hyperface);
 	find_subfaces(current_hyperface, bounding_subfaces);
 
-	// -----
-	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces_of_current_hyperface(0, us_hash);
-	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> subfaces_of_current_hyperface(0, us_hash);
-	// std::unordered_set<Face, decltype(&us_hash)> subfaces_of_current_hyperface(0, us_hash);
 	Faces subfaces_of_current_hyperface;
-	// -----
-
-	// -----
-	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces(0, us_hash);
-	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> subfaces(0, us_hash);
-	// std::unordered_set<Face, decltype(&us_hash)> subfaces(0, us_hash);
 	Faces subfaces;
-	// -----
-
-	// -----
-	// std::unordered_set<size_t> new_hyperface;
-	// std::set<size_t> new_hyperface;
 	Face new_hyperface;
-	// -----
 	size_t new_vertex_index;	
-
-	// -----
-	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> intersection_of_subfaces(0, us_hash);
-	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> intersection_of_subfaces(0, us_hash);
-	// std::unordered_set<Face, decltype(&us_hash)> intersection_of_subfaces(0, us_hash);
 	Faces intersection_of_subfaces;
-	// -----
-	// -----
-	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> subfaces_of_new_hyperface(0, us_hash);
-	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> subfaces_of_new_hyperface(0, us_hash);
-	// std::unordered_set<Face, decltype(&us_hash)> subfaces_of_new_hyperface(0, us_hash);
 	Faces subfaces_of_new_hyperface;
-	// -----
-
 	std::vector<MathVector> cross_product_vectors;
-
 	MathVector normal_of_hyperface;
 	MathVector normal_of_subface;
 
@@ -229,11 +178,7 @@ void GiftWrapping::find_subfaces(const Face& hyperface, Faces& subfaces)
 {
 	subfaces.m_data.clear();
 
-	// -----
-	// std::unordered_set<size_t> subface;
-	// std::set<size_t> subface;
 	Face subface;
-	// -----
 
 	for (size_t indexSkip = 0; indexSkip < hyperface.m_data.size(); ++indexSkip)
 	{
@@ -368,7 +313,6 @@ void GiftWrapping::create_coordinate_axis(size_t num_of_coordinate, size_t dimen
 	coordinate_axis[num_of_coordinate] = 1.0;
 }
 
-// -----
 void GramSchmidtOrthogonalization(const std::vector<MathVector>& some_basis, std::vector<MathVector>& orthonormal_basis)
 {
 	orthonormal_basis.clear();
@@ -390,7 +334,6 @@ void GramSchmidtOrthogonalization(const std::vector<MathVector>& some_basis, std
 	}
 
 }
-// -----
 
 void GiftWrapping::find_first_hyperface(Face& first_hyperface)
 {

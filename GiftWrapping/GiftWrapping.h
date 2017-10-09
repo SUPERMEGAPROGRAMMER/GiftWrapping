@@ -2,8 +2,6 @@
 
 #include "MathVector.h"
 
-// -----
-
 class Face
 {
 public:
@@ -53,11 +51,7 @@ public:
 	std::set<size_t> m_data;
 };
 
-// -----
-// size_t us_hash(const std::set<size_t>& S);
 size_t us_hash(const Face& S);
-// -----
-
 
 class Faces
 {
@@ -70,8 +64,6 @@ public:
 	std::unordered_set<Face, decltype(&us_hash)> m_data;
 };
 
-// -----
-
 class GiftWrapping
 {
 public:
@@ -83,31 +75,18 @@ public:
 	std::vector<MathVector> input_points;
 	std::vector<MathVector> scatter_points;
 
-	// -----
-	// std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)> convex_hull;
-	// std::unordered_set<std::set<size_t>, decltype(&us_hash)> convex_hull;
-	//std::unordered_set<Face, decltype(&us_hash)> convex_hull;
 	Faces convex_hull;
-	// -----
+
 private:
 	void wrapping_algorithm();
 	void scatter_operation();
 
-	// -----
-	// void find_subfaces(const std::unordered_set<size_t>& hyperface, std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)>& subfaces);
-	// void find_subfaces(const std::set<size_t>& hyperface, std::unordered_set<std::set<size_t>, decltype(&us_hash)>& subfaces);
-	// void find_subfaces(const Face& hyperface, std::unordered_set<Face, decltype(&us_hash)>& subfaces);
 	void find_subfaces(const Face& hyperface, Faces& subfaces);
-	// -----
 
 	size_t wrapping(bool is_first_hyperface, const MathVector& normal_of_hyperface, const MathVector& point_of_subface, const MathVector& normal_of_subface, const std::unordered_set<size_t>& indexes_of_candidates);
 	void create_coordinate_axis(size_t num_of_coordinate, size_t dimension, MathVector& coordinate_axis);
 	
-	// -----
-	// void find_first_hyperface(std::unordered_set<size_t>& first_hyperface);
-	// void find_first_hyperface(std::set<size_t>& first_hyperface);
 	void find_first_hyperface(Face& first_hyperface);
-	// -----
 
 	bool b_FinishAlgorithm;
 	bool b_NonSimplicity;

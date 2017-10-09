@@ -25,13 +25,9 @@ int GiftWrappingTest::signOfSemiSpace(const std::vector<MathVector>& points_of_h
 	return res > 0 ? 1 : res < 0 ? -1 : 0;
 }
 
-// -----
 void GiftWrappingTest::setFilledPolyhedron(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces, std::vector<MathVector>& result)
 {
 	size_t dimension = vertices.begin()->getDimension();
-
-	// -----
-	// Find MIN and MAX of each coordinate.
 
 	std::vector<double> min_coordinate(dimension);
 	std::vector<double> max_coordinate(dimension);
@@ -49,8 +45,6 @@ void GiftWrappingTest::setFilledPolyhedron(size_t num_of_interior_points, const 
 					max_coordinate[coordinate] = point[coordinate];
 		}
 	}
-
-	// -----
 
 	boost::mt19937 generator;
 	generator.seed(static_cast<unsigned>(std::time(0)));
@@ -88,9 +82,7 @@ void GiftWrappingTest::setFilledPolyhedron(size_t num_of_interior_points, const 
 
 			if (isEqualSigns)
 			{
-				// =====
 				std::cout << interior_point << std::endl;
-				// =====
 
 				result.push_back(interior_point);
 				break;
@@ -100,17 +92,6 @@ void GiftWrappingTest::setFilledPolyhedron(size_t num_of_interior_points, const 
 	}
 
 }
-// -----
-//size_t us_hash(const std::unordered_set<size_t>& S);
-/*
-size_t us_hash(const std::unordered_set<size_t>& S)
-{
-	size_t sum = 0;
-	for (auto item : S)
-		sum += item;
-	return sum;
-}
-*/
 
 void GiftWrappingTest::testNonSymplicialAlgorithm(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces)
 {
@@ -168,7 +149,6 @@ void GiftWrappingTest::testNonSymplicialAlgorithm(size_t num_of_interior_points,
 	
 	std::ofstream out_hyperfaces("data\\faces.txt");
 	for (auto hyperface : gw.convex_hull.m_data)
-	//for (auto hyperface : max_iter->first)
 	{
 		for (auto index : hyperface.m_data)
 			out_hyperfaces << index << " ";
@@ -191,25 +171,18 @@ void GiftWrappingTest::testPolyhedron(size_t num_of_interior_points, const std::
 
 	gw.input_points = vertices;
 
-	// -----
 	setFilledPolyhedron(num_of_interior_points, vertices, hyperfaces, gw.input_points);
-	// -----
 
-	// -----
 	if (postprocessing_points != nullptr)
 		postprocessing_points(gw.input_points);
-	// -----
 
 	gw.run_algorithm();
 
-	// -----
 	std::ofstream out_points("data\\points.txt");
 
-	// -----
 	//for (auto point : gw.input_points)
 	for (auto point : gw.scatter_points)
 		out_points << point << std::endl;
-	// -----
 
 	out_points.close();
 
@@ -226,9 +199,6 @@ void GiftWrappingTest::testPolyhedron(size_t num_of_interior_points, const std::
 
 	out_hyperfaces.close();
 
-	// -----
-
-	// $$$$$
 	for (auto hyperface : gw.convex_hull.m_data)
 	{
 		std::cout << "{ ";
@@ -236,7 +206,6 @@ void GiftWrappingTest::testPolyhedron(size_t num_of_interior_points, const std::
 			std::cout << index << " ";
 		std::cout << "}" << std::endl;
 	}
-	// $$$$$
 
 	system("python plot_3D4D.py");
 	//system("python draw_stats_CH.py");
@@ -257,7 +226,6 @@ void GiftWrappingTest::testRegularPolygon_2D(size_t num_of_vertices, size_t num_
 	testPolyhedron(num_of_interior_points, vertices, hyperfaces, nullptr);
 }
 
-// -----
 void GiftWrappingTest::testRegularPolygon_2D_in_3D(size_t num_of_vertices, size_t num_of_interior_points)
 {
 	std::vector<MathVector> vertices;
@@ -291,7 +259,6 @@ void GiftWrappingTest::testRegularPolygon_2D_in_3D(size_t num_of_vertices, size_
 
 	});
 }
-// -----
 
 void GiftWrappingTest::testPyramid(size_t num_of_interior_points)
 {
@@ -739,7 +706,6 @@ void GiftWrappingTest::testPenterakt(size_t num_of_interior_points)
 	*/
 }
 
-// -----
 void GiftWrappingTest::rotate_translate(std::vector<MathVector>& points, const std::vector<double>& angles, const MathVector & offset)
 {
 	std::vector<std::vector<double>> rotation_matrix;
@@ -760,8 +726,7 @@ void GiftWrappingTest::generate_rotation_matrix(double angle, size_t axis_1, siz
 {
 	res_matrix.clear();
 	res_matrix.assign(dimension, std::vector<double>());
-	//for (auto row : res_matrix)
-	//	row.assign(dimension, 0);
+
 	for (size_t i = 0; i < res_matrix.size(); ++i)
 		res_matrix[i].assign(dimension, 0);	
 
@@ -793,4 +758,3 @@ void GiftWrappingTest::generate_regular_polygon_2D(size_t num_of_vertices, size_
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[num_of_vertices - 1], vertices[0] }));
 
 }
-// -----
