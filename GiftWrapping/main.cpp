@@ -3,10 +3,18 @@
 
 int main()
 {
-	//GiftWrappingTest::testRegularPolygon_2D(3, 100); // Don't work (alpha)
-	//GiftWrappingTest::testRegularPolygon_2D(4, 100);
+	// -----
+	//GiftWrappingTest::testNonSimplicialSquare_2D(0); // Don't work (alpha)
+	//GiftWrappingTest::testLineSegment_2D(true);
+	//GiftWrappingTest::testNonSimplicialSquare_2D_in_3D(0); // Don't work (alpha)
+	//GiftWrappingTest::testLineSegment_2D_in_3D(true);
+	// -----
 
-	GiftWrappingTest::testRegularPolygon_2D_in_3D(3, 100); // Don't work (alpha)
+	//GiftWrappingTest::testRegularPolygon_2D(3, 100); // Don't work (alpha)
+	//GiftWrappingTest::testRegularPolygon_2D(4, 1000);
+
+	//GiftWrappingTest::testRegularPolygon_2D_in_3D(8, 0);
+	//GiftWrappingTest::testRegularPolygon_2D_in_3D(3, 100); // Don't work (alpha)
 	//GiftWrappingTest::testRegularPolygon_2D_in_3D(4, 100);
 	//GiftWrappingTest::testRegularPolygon_2D_in_3D(3, 0); //basis
 

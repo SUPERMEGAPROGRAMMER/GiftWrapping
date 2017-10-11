@@ -52,7 +52,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="plot_3D4D.py" />
     <None Include="draw_stats_CH.py" />
+    <None Include="plot_3D4D.py" />
   </ItemGroup>
 </Project>

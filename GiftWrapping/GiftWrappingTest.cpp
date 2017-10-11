@@ -224,6 +224,7 @@ void GiftWrappingTest::testRegularPolygon_2D(size_t num_of_vertices, size_t num_
 	generate_regular_polygon_2D(num_of_vertices, num_of_interior_points, vertices, hyperfaces);
 
 	testPolyhedron(num_of_interior_points, vertices, hyperfaces, nullptr);
+	//testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
 }
 
 void GiftWrappingTest::testRegularPolygon_2D_in_3D(size_t num_of_vertices, size_t num_of_interior_points)
@@ -258,6 +259,138 @@ void GiftWrappingTest::testRegularPolygon_2D_in_3D(size_t num_of_vertices, size_
 		points = new_points;
 
 	});
+}
+
+void GiftWrappingTest::testNonSimplicialSquare_2D(size_t num_of_interior_points)
+{
+	std::vector<MathVector> vertices;
+
+	vertices.push_back(MathVector({ -1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0,  0.0 }));
+	vertices.push_back(MathVector({ -1.0,  1.0 }));
+	vertices.push_back(MathVector({  0.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0,  1.0 }));
+	vertices.push_back(MathVector({  1.0,  0.0 }));
+	vertices.push_back(MathVector({  1.0, -1.0 }));
+	vertices.push_back(MathVector({  0.0, -1.0 }));
+
+	std::vector<std::vector<MathVector>> hyperfaces;
+
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[1] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[1], vertices[2] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[3] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[4] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[4], vertices[5] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[5], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[6], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[7], vertices[0] }));
+
+	testPolyhedron(num_of_interior_points, vertices, hyperfaces, nullptr);
+}
+
+void GiftWrappingTest::testNonSimplicialSquare_2D_in_3D(size_t num_of_interior_points)
+{
+	std::vector<MathVector> vertices;
+
+	vertices.push_back(MathVector({ -1.0, -1.0 }));
+	vertices.push_back(MathVector({ -1.0,  0.0 }));
+	vertices.push_back(MathVector({ -1.0,  1.0 }));
+	vertices.push_back(MathVector({ 0.0,  1.0 }));
+	vertices.push_back(MathVector({ 1.0,  1.0 }));
+	vertices.push_back(MathVector({ 1.0,  0.0 }));
+	vertices.push_back(MathVector({ 1.0, -1.0 }));
+	vertices.push_back(MathVector({ 0.0, -1.0 }));
+
+	std::vector<std::vector<MathVector>> hyperfaces;
+
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[1] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[1], vertices[2] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[3] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[4] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[4], vertices[5] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[5], vertices[6] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[6], vertices[7] }));
+	hyperfaces.push_back(std::vector<MathVector>({ vertices[7], vertices[0] }));
+
+	testPolyhedron(num_of_interior_points, vertices, hyperfaces, 
+		[](std::vector<MathVector>& points)
+		{
+			std::vector<MathVector> new_points;
+			MathVector new_p;
+
+			size_t dimension = points[0].getDimension();
+
+			for (auto p : points)
+			{
+				new_p = MathVector(dimension + 1);
+
+				for (size_t i = 0; i < dimension; ++i)
+					new_p[i] = p[i];
+
+				new_p[dimension] = 0.0;
+
+				new_points.push_back(new_p);
+			}
+
+			rotate_translate(new_points, { boost::math::double_constants::pi / 4, 0.0, 0.0 }, MathVector({ 0.0, 0.0, 0.0 }));
+
+			points = new_points;
+
+		});
+}
+
+void GiftWrappingTest::testLineSegment_2D(bool add_point_in_the_middle)
+{
+	std::vector<MathVector> vertices;
+
+	vertices.push_back(MathVector({ -1.0, -1.0 }));
+	vertices.push_back(MathVector({  1.0,  1.0 }));
+
+	if (add_point_in_the_middle)
+		vertices.push_back(MathVector({ 0.0,  0.0 }));
+
+	std::vector<std::vector<MathVector>> hyperfaces;
+
+	testPolyhedron(0, vertices, hyperfaces, nullptr);
+}
+
+void GiftWrappingTest::testLineSegment_2D_in_3D(bool add_point_in_the_middle)
+{
+	std::vector<MathVector> vertices;
+
+	vertices.push_back(MathVector({ -1.0, -1.0 }));
+	vertices.push_back(MathVector({ 1.0,  1.0 }));
+
+	if (add_point_in_the_middle)
+		vertices.push_back(MathVector({ 0.0,  0.0 }));
+
+	std::vector<std::vector<MathVector>> hyperfaces;
+
+	testPolyhedron(0, vertices, hyperfaces, 
+		[](std::vector<MathVector>& points)
+		{
+			std::vector<MathVector> new_points;
+			MathVector new_p;
+
+			size_t dimension = points[0].getDimension();
+
+			for (auto p : points)
+			{
+				new_p = MathVector(dimension + 1);
+
+				for (size_t i = 0; i < dimension; ++i)
+					new_p[i] = p[i];
+
+				new_p[dimension] = 0.0;
+
+				new_points.push_back(new_p);
+			}
+
+			rotate_translate(new_points, { boost::math::double_constants::pi / 4, 0.0, 0.0 }, MathVector({ 0.0, 0.0, 0.0 }));
+
+			points = new_points;
+
+		});
 }
 
 void GiftWrappingTest::testPyramid(size_t num_of_interior_points)
@@ -720,6 +853,10 @@ void GiftWrappingTest::rotate_translate(std::vector<MathVector>& points, const s
 				for (size_t i = 0; i < points.size(); ++i)
 					points[i] = rotation_matrix * points[i];
 			}
+
+	for (size_t i = 0; i < points.size(); ++i)
+		points[i] = points[i] + offset;
+
 }
 
 void GiftWrappingTest::generate_rotation_matrix(double angle, size_t axis_1, size_t axis_2, size_t dimension, std::vector<std::vector<double>>& res_matrix)

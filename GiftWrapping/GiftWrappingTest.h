@@ -12,6 +12,10 @@ public:
 	// -----
 	static void testRegularPolygon_2D(size_t num_of_vertices, size_t num_of_interior_points);
 	static void testRegularPolygon_2D_in_3D(size_t num_of_vertices, size_t num_of_interior_points);
+	static void testNonSimplicialSquare_2D(size_t num_of_interior_points);
+	static void testNonSimplicialSquare_2D_in_3D(size_t num_of_interior_points);
+	static void testLineSegment_2D(bool add_point_in_the_middle);
+	static void testLineSegment_2D_in_3D(bool add_point_in_the_middle);
 	// -----
 
 	static void testPyramid(size_t num_of_interior_points);
