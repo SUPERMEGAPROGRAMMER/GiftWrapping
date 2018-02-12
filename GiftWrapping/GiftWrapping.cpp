@@ -12,7 +12,7 @@ size_t us_hash(const Face& S)
 	return sum;
 }
 
-GiftWrapping::GiftWrapping()
+GiftWrapping::GiftWrapping(bool _b_random_seed) : b_random_seed(_b_random_seed)
 {
 	input_points = std::vector<MathVector>();
 	scatter_points = std::vector<MathVector>();
@@ -204,7 +204,14 @@ void GiftWrapping::scatter_operation()
 	size_t dimension = scatter_points[0].getDimension();
 
 	boost::mt19937 generator;
-	generator.seed(static_cast<unsigned>(std::time(0)));
+
+	// -----
+	if (b_random_seed)
+		generator.seed(static_cast<size_t>(std::time(0)));
+	else
+		generator.seed(0);
+	// -----
+
 	auto distribution = boost::uniform_real<>(0.0, max_coord_offset);
 
 	std::vector<double> offset(dimension);
@@ -239,18 +246,20 @@ size_t GiftWrapping::wrapping(bool is_first_hyperface, const MathVector& normal_
 		}
 
 		// -----
+		/*
 		std::cout << "A non-simplicial case is found on 1st hyperface (status: alpha)" << std::endl;
 		system("pause");
 		exit(-1);
+		*/
 
-		/*
+		
 		// !!!!!
 		if (fabs(dot_v_a) > eps)
 		// !!!!!
 			return *indexes_of_candidates.begin();
 		//else
 		//	std::cout << "wrapping warning: \"ctg\" should be = +inf" << std::endl;
-		*/
+		
 		// -----
 	}
 
@@ -279,18 +288,19 @@ size_t GiftWrapping::wrapping(bool is_first_hyperface, const MathVector& normal_
 			}
 
 			// -----
+			/*
 			std::cout << "A non-simplicial case is found on 1st hyperface (status: alpha)" << std::endl;
 			system("pause");
 			exit(-1);
-
-			/*
+			*/
+			
 			// !!!!!
 			if (fabs(dot_v_a) > eps)
 			// !!!!!
 				return *it;
 			else
 				continue;
-			*/
+			
 			// -----
 		}
 

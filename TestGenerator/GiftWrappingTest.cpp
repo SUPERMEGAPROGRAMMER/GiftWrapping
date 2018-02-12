@@ -1,13 +1,102 @@
-#include "stdafx.h"
+#include "../GiftWrapping/stdafx.h"
 #include "GiftWrappingTest.h"
 
-GiftWrappingTest::GiftWrappingTest()
+GiftWrappingTest::GiftWrappingTest(TestConfig _cfg) : cfg(_cfg)
 {
 }
 
 
 GiftWrappingTest::~GiftWrappingTest()
 {
+}
+
+void GiftWrappingTest::generate_test()
+{
+	switch (cfg.dimension)
+	{
+	case 2:
+		switch (cfg.test_id)
+		{
+		case TestConfig::to_underlying(TestConfig::test_2D::RegularPolygon):
+			testRegularPolygon_2D(cfg.num_of_vertices, cfg.num_of_vertices);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_2D::NonSimplicialSquare):
+			testNonSimplicialSquare_2D(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_2D::LineSegment):
+			testLineSegment_2D(true);
+			break;
+		default:
+			return;
+		}
+		break;
+
+	case 3:
+		switch (cfg.test_id)
+		{
+		case TestConfig::to_underlying(TestConfig::test_3D::Pyramid):
+			testPyramid(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_3D::Octahedron):
+			testOctahedron(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_3D::Icosahedron):
+			testIcosahedron(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_3D::Cube):
+			testCube(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_3D::Dodecahedron):
+			testDodecahedron(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_3D::RegularPolygon):
+			testRegularPolygon_2D_in_3D(cfg.num_of_vertices, cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_3D::NonSimplicialSquare):
+			testNonSimplicialSquare_2D_in_3D(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_3D::LineSegment):
+			testLineSegment_2D_in_3D(true);
+			break;
+		default:
+			return;
+		}
+		break;
+
+	case 4:
+		switch (cfg.test_id)
+		{
+		case TestConfig::to_underlying(TestConfig::test_4D::Cell_5):
+			test5Cell(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_4D::Cell_16):
+			test16Cell(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_4D::Tesseract):
+			testTesseract(cfg.num_of_interior_points);
+			break;
+		case TestConfig::to_underlying(TestConfig::test_4D::Cell_24):
+			test24Cell(cfg.num_of_interior_points);
+			break;
+		default:
+			return;
+		}
+		break;
+
+	default:
+		return;
+	}
+
+	// -----
+	std::ofstream out_stream("data/source_points.txt");
+
+	out_stream << cfg.dimension << std::endl;
+
+	for (auto point : result)
+		out_stream << point << std::endl;
+
+	out_stream.close();
+	// -----
 }
 
 int GiftWrappingTest::signOfSemiSpace(const std::vector<MathVector>& points_of_hyperface, const MathVector& test_point)
@@ -25,7 +114,11 @@ int GiftWrappingTest::signOfSemiSpace(const std::vector<MathVector>& points_of_h
 	return res > 0 ? 1 : res < 0 ? -1 : 0;
 }
 
-void GiftWrappingTest::setFilledPolyhedron(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces, std::vector<MathVector>& result)
+void GiftWrappingTest::setFilledPolyhedron(	size_t num_of_interior_points, 
+											const std::vector<MathVector>& vertices, 
+											const std::vector<std::vector<MathVector>>& hyperfaces,
+											size_t rnd_seed,
+											std::vector<MathVector>& result)
 {
 	size_t dimension = vertices.begin()->getDimension();
 
@@ -47,7 +140,7 @@ void GiftWrappingTest::setFilledPolyhedron(size_t num_of_interior_points, const 
 	}
 
 	boost::mt19937 generator;
-	generator.seed(static_cast<unsigned>(std::time(0)));
+	generator.seed(rnd_seed);
 	std::vector<boost::uniform_real<>> distributions(dimension);
 	for (size_t coordinate = 0; coordinate < dimension; ++coordinate)
 		distributions[coordinate] = boost::uniform_real<>(min_coordinate[coordinate], max_coordinate[coordinate]);
@@ -82,8 +175,6 @@ void GiftWrappingTest::setFilledPolyhedron(size_t num_of_interior_points, const 
 
 			if (isEqualSigns)
 			{
-				std::cout << interior_point << std::endl;
-
 				result.push_back(interior_point);
 				break;
 			}
@@ -93,123 +184,25 @@ void GiftWrappingTest::setFilledPolyhedron(size_t num_of_interior_points, const 
 
 }
 
-void GiftWrappingTest::testNonSymplicialAlgorithm(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces)
+void GiftWrappingTest::testPolyhedron(	size_t num_of_interior_points, 
+										const std::vector<MathVector>& vertices, 
+										const std::vector<std::vector<MathVector>>& hyperfaces, 
+										void(*postprocessing_points)(std::vector<MathVector>& points))
 {
-	const size_t num_of_iter = 10;
-	
-	auto gw = GiftWrapping();
-	gw.input_points = vertices;
-	setFilledPolyhedron(num_of_interior_points, vertices, hyperfaces, gw.input_points);
+	result = vertices;
 
-	std::vector<size_t> nums_of_selection(gw.input_points.size(), 0);
-	std::unordered_set<size_t> selected_indexes(0);
-	
-	// ~~~~~
-	//auto nums_convex_hulls = std::map<std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)>, size_t>();
-	// ~~~~~
+	// -----
+	size_t rnd_seed = 0;
+	if (cfg.b_random_seed)
+		rnd_seed = static_cast<size_t>(std::time(nullptr));
+	// -----
 
-	for (size_t counter = 0; counter < num_of_iter; ++counter)
-	{
-		gw.scatter_points.clear();
-		gw.run_algorithm();
-
-		selected_indexes.clear();
-		for (auto hyperface : gw.convex_hull.m_data)
-			for (auto i : hyperface.m_data)
-			{
-				selected_indexes.insert(i);
-			}
-		for (auto i : selected_indexes)
-			++nums_of_selection[i];
-
-		// ~~~~~
-		/*
-		if (nums_convex_hulls.count(gw.convex_hull))
-			++nums_convex_hulls[gw.convex_hull];
-		else
-			nums_convex_hulls.insert(std::pair<std::unordered_set<std::unordered_set<size_t>, decltype(&us_hash)>, size_t>(gw.convex_hull, 0));
-		*/
-		// ~~~~~
-	}
-
-	// ~~~~~
-	// find the most popular convex hull
-	/*
-	auto max_iter = nums_convex_hulls.begin();
-	for (auto it = nums_convex_hulls.begin(); it != nums_convex_hulls.end(); ++it)
-		if (it->second > max_iter->second)
-			max_iter = it;
-	*/
-	// ~~~~~
-
-	std::ofstream out_points("data\\points.txt");
-	for (auto point : gw.input_points)
-		out_points << point << std::endl;
-	out_points.close();
-	
-	std::ofstream out_hyperfaces("data\\faces.txt");
-	for (auto hyperface : gw.convex_hull.m_data)
-	{
-		for (auto index : hyperface.m_data)
-			out_hyperfaces << index << " ";
-		out_hyperfaces << std::endl;
-	}
-	out_hyperfaces.close();
-
-	
-	std::ofstream out_stats_info("data\\stats_info.txt");
-	for (auto num : nums_of_selection)
-		out_stats_info << num << std::endl;
-	out_stats_info.close();
-
-	system("python draw_stats_CH.py");
-}
-
-void GiftWrappingTest::testPolyhedron(size_t num_of_interior_points, const std::vector<MathVector>& vertices, const std::vector<std::vector<MathVector>>& hyperfaces, void(*postprocessing_points)(std::vector<MathVector>& points))
-{
-	auto gw = GiftWrapping();
-
-	gw.input_points = vertices;
-
-	setFilledPolyhedron(num_of_interior_points, vertices, hyperfaces, gw.input_points);
+	setFilledPolyhedron(num_of_interior_points, vertices, hyperfaces, rnd_seed, result);
 
 	if (postprocessing_points != nullptr)
-		postprocessing_points(gw.input_points);
-
-	gw.run_algorithm();
-
-	std::ofstream out_points("data\\points.txt");
-
-	//for (auto point : gw.input_points)
-	for (auto point : gw.scatter_points)
-		out_points << point << std::endl;
-
-	out_points.close();
-
-
-	std::ofstream out_hyperfaces("data\\faces.txt");
-
-	for (auto hyperface : gw.convex_hull.m_data)
-	{
-		for (auto index : hyperface.m_data)
-			out_hyperfaces << index << " ";
-
-		out_hyperfaces << std::endl;
-	}
-
-	out_hyperfaces.close();
-
-	for (auto hyperface : gw.convex_hull.m_data)
-	{
-		std::cout << "{ ";
-		for (auto index : hyperface.m_data)
-			std::cout << index << " ";
-		std::cout << "}" << std::endl;
-	}
-
-	system("python plot_3D4D.py");
-	//system("python draw_stats_CH.py");
+		postprocessing_points(result);
 }
+
 
 void GiftWrappingTest::testRandomPointCloud(size_t num_of_points)
 {
@@ -511,8 +504,8 @@ void GiftWrappingTest::testCube(size_t num_of_interior_points)
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[0], vertices[1], vertices[2] }));
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[3], vertices[2], vertices[1] }));
 
-	testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
-	//testPolyhedron(num_of_interior_points, vertices, hyperfaces);
+	//testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
+	testPolyhedron(num_of_interior_points, vertices, hyperfaces, nullptr);
 }
 
 void GiftWrappingTest::testDodecahedron(size_t num_of_interior_points)
@@ -558,8 +551,8 @@ void GiftWrappingTest::testDodecahedron(size_t num_of_interior_points)
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[2], vertices[6], vertices[8], vertices[15], vertices[9] }));
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[19], vertices[14], vertices[18], vertices[3], vertices[0] }));
 
-	testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
-	//testPolyhedron(num_of_interior_points, vertices, hyperfaces);
+	//testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
+	testPolyhedron(num_of_interior_points, vertices, hyperfaces, nullptr);
 }
 
 void GiftWrappingTest::test5Cell(size_t num_of_interior_points)
@@ -755,8 +748,8 @@ void GiftWrappingTest::test24Cell(size_t num_of_interior_points)
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[5], vertices[8], vertices[16], vertices[20], vertices[12], vertices[7] }));
 	hyperfaces.push_back(std::vector<MathVector>({ vertices[5], vertices[9], vertices[13], vertices[21], vertices[17], vertices[6] }));
 	
-	testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
-	//testPolyhedron(num_of_interior_points, vertices, hyperfaces);
+	//testNonSymplicialAlgorithm(num_of_interior_points, vertices, hyperfaces);
+	testPolyhedron(num_of_interior_points, vertices, hyperfaces, nullptr);
 }
 
 void GiftWrappingTest::testPenterakt(size_t num_of_interior_points)

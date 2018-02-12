@@ -20,7 +20,7 @@ MathVector::~MathVector()
 {
 }
 
-size_t MathVector::getDimension() const 
+size_t MathVector::getDimension() const
 {
 	return math_vector.size();
 }
@@ -51,7 +51,7 @@ MathVector operator*(double scalar, const MathVector& vector)
 
 MathVector operator-(const MathVector& left, const MathVector& right)
 {
-	 return left + (-1)*right;
+	return left + (-1)*right;
 }
 
 double operator*(const MathVector& left, const MathVector& right)
@@ -89,6 +89,14 @@ std::ostream& operator<<(std::ostream& output_stream, const MathVector& vector)
 	return output_stream;
 }
 
+std::istream& operator>>(std::istream& input_stream, MathVector& vector)
+{
+	for (size_t counter = 0; counter < vector.getDimension(); ++counter)
+		input_stream >> vector[counter];
+
+	return input_stream;
+}
+
 double& MathVector::operator[](size_t index)
 {
 	return math_vector[index];
@@ -123,7 +131,7 @@ MathVector MathVector::crossProduct(const std::vector<MathVector>& vectors)
 			row_tmp_matrix = row;
 			if (flag_skip)
 				--row_tmp_matrix;
-				
+
 
 			for (size_t column = 0; column < dimension - 1; ++column)
 				tmp_matrix[column][row_tmp_matrix] = vectors[column][row];
@@ -168,7 +176,7 @@ double MathVector::determinant(std::vector<std::vector<double>>& matrix)
 					// -----
 					break;
 				}
-			
+
 			if (!flag_NonZeroExits)
 				return 0.0;
 		}

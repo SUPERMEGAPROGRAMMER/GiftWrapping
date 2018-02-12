@@ -81,8 +81,8 @@ def read_file(file_name):
     return np.array(res)
 
 	
-points = read_file('data/points.txt')
-faces  = read_file('data/faces.txt')
+points = read_file('../Debug/data/result_points.txt')
+faces  = read_file('../Debug/data/result_faces.txt')
 
 # -----
 # Square

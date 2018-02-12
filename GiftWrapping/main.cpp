@@ -1,33 +1,40 @@
 #include "stdafx.h"
-#include "GiftWrappingTest.h"
+#include "Parser.h"
+#include "GiftWrapping.h"
 
-int main()
+int main(int argc, char ** argv)
 {
-	// -----
-	//GiftWrappingTest::testNonSimplicialSquare_2D(0); // Don't work (alpha)
-	//GiftWrappingTest::testLineSegment_2D(true);
-	//GiftWrappingTest::testNonSimplicialSquare_2D_in_3D(0); // Don't work (alpha)
-	//GiftWrappingTest::testLineSegment_2D_in_3D(true);
-	// -----
+	if ((argc == 2) || (argc == 5))
+	{
+		if (atoi(argv[1]) < 0)
+		{
+			std::cerr << "Usage: GiftWrapping.exe b_random_seed [in_file.txt out_file.txt]" << std::endl;
+			return EXIT_FAILURE;
+		}
 
-	//GiftWrappingTest::testRegularPolygon_2D(3, 100); // Don't work (alpha)
-	//GiftWrappingTest::testRegularPolygon_2D(4, 1000);
+		bool b_random_seed = (atoi(argv[1]) > 0);
 
-	//GiftWrappingTest::testRegularPolygon_2D_in_3D(8, 0);
-	//GiftWrappingTest::testRegularPolygon_2D_in_3D(3, 100); // Don't work (alpha)
-	//GiftWrappingTest::testRegularPolygon_2D_in_3D(4, 100);
-	//GiftWrappingTest::testRegularPolygon_2D_in_3D(3, 0); //basis
+		Parser p(argv[2], argv[3], argv[4]);
+		p.read();
+		if (p.open_correct && p.parse_correct)
+		{
+			GiftWrapping gw(b_random_seed);
+			gw.input_points = p.in_info;
+			gw.run_algorithm();
 
-	//GiftWrappingTest::testPyramid(100);	  // Don't work (alpha)
-	//GiftWrappingTest::testOctahedron(100);
-	//GiftWrappingTest::testIcosahedron(100); // Don't work (alpha)
-	//GiftWrappingTest::testCube(0);		  // Don't work (alpha)
-	//GiftWrappingTest::testDodecahedron(100);// Don't work (alpha)
-	//GiftWrappingTest::test5Cell(100);		  // Don't work (alpha)
-	//GiftWrappingTest::test16Cell(100);
-	//GiftWrappingTest::testTesseract(0);	  // Don't work (alpha)
-	//GiftWrappingTest::test24Cell(10);		  // Don't work (alpha)
+			p.out_info.points = gw.scatter_points;
+			p.out_info.faces = gw.convex_hull;
 
-	system("pause");
-	return 0;
+			p.write();
+
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
+	else
+	{
+		std::cerr << "Usage: GiftWrapping.exe b_random_seed [in_file.txt out_file.txt]" << std::endl;
+		return EXIT_FAILURE;
+	}
 }
